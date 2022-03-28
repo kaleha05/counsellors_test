@@ -55,6 +55,7 @@ class MessageDatabase {
     return maps.map((json) => TextMsg.fromJson(json)).toList();
   }
 
+  // read messages sent to a particular person
   Future<List<TextMsg>> readMessages(String receiver) async {
     final db = await instance.database;
 

@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:rada_counsellors/home.dart';
-import 'counsellor_auth.dart';
 import 'theme.dart';
 
 class Login extends StatefulWidget {

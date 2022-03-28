@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1047941580644",
+    "project_id": "radaspu-bcc2c",
+    "storage_bucket": "radaspu-bcc2c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047941580644:android:e82bd19186130603e8dc71",
+        "android_client_info": {
+          "package_name": "com.radaspu.radaspu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1047941580644-2fqg0bvs3ioqek8570uhtuucn73mg4es.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbT_1GDZ9iuBucnt4WV-XlfoNhbx_PQk8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1047941580644-2fqg0bvs3ioqek8570uhtuucn73mg4es.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

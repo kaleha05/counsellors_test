@@ -28,15 +28,11 @@ class _ChatState extends State<Chat> {
   ScrollController _scrollController = new ScrollController();
   final myController = TextEditingController();
   List<TextMsg> messages = [];
-  String userId = '';
+  String userId = '0712345786'; // TODO: get this dynamically
+  String username = "me";
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late TextMsg incomingMsg;
-
-  void getId() async {
-    User user = await _firebaseAuth.currentUser!;
-    this.userId = user.uid;
-  }
 
   @override
   void initState() {
@@ -54,9 +50,6 @@ class _ChatState extends State<Chat> {
     //subscribe to the channel
     channel = pusher.subscribe("SPU-CHAT");
 
-    getId();
-    print(userId);
-
     // listen to all messages coming to you; event name is your userId
     channel.bind(userId, (msg) async {
       // convert incoming messages to json format
@@ -64,7 +57,7 @@ class _ChatState extends State<Chat> {
       print("The message is ${convert['message']}");
 
       // create a TextMsg from the incoming message
-      incomingMsg = new TextMsg(id: randomString(), senderId: convert['message']['sender'], message: convert['message']['message'], receiverId: convert['message']['receiver_id']);
+      incomingMsg = TextMsg(id: randomString(), senderId: convert['message']['sender_id'], message: convert['message']['message'], receiverId: convert['message']['receiver_id']);
       print("msg" + incomingMsg.toString());
 
       // add the incoming message to the database
@@ -94,15 +87,15 @@ class _ChatState extends State<Chat> {
   }
 
   // send a post request to the laravel application. The laravel app will send the message to Pusher
+  // TODO: replace url with spu server url
   postRequest() async{
-    getId();
     http.Response response = await http
-        .post(Uri.parse("https://rada-test.herokuapp.com/api/push_message"), headers: {
+        .post(Uri.parse("http://192.168.0.26/chat/public/api/push_message"), headers: {
       "Accept": "application/json"
     }, body: {
-      "sender" : "Gloria", // TODO: use dynamic variable
+      "sender_id" : userId,
+      "sender_name" : username,
       "message": myController.text,
-      "user_id": userId,
       "receiver_id": widget.phone
     });
     var converted = json.decode(response.body);
@@ -236,7 +229,6 @@ class _ChatState extends State<Chat> {
                         icon: Icon(Icons.send),
                         onPressed: ()  {
                           if(myController.text.isNotEmpty){
-                            getId();
                             MessageDatabase.instance.create(TextMsg(id: randomString(), senderId: userId, message: myController.text, receiverId: widget.phone)).then((value) => {
                               setState(() {
                                 refreshMessages(); //scroll automatically

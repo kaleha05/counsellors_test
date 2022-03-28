@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Container(
                 alignment: Alignment.center,
                 child: const Text(
-                  'For Your Mental Health Needs',
+                  'Counsellors App',
                   style: TextStyle(fontSize: 16,
                       fontFamily: 'Montserrat'
                   ),

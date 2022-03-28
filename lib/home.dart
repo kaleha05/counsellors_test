@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
 import 'chat.dart';
+import 'package:pusher_client/pusher_client.dart';
+import 'dart:convert';
 
-String _title = "Counsellors";
+String _title = "Students";
 
-List<Map<String, String>> counsellors = [
-  {
-    'name': 'Anne',
-    'phone': '0706780121'
-  },
-  {
-    'name': 'Mary',
-    'phone': '0712345678'
-  },
-  {
-    'name': "Tom",
-    'phone': '0723546789'
-  }
-];
+// TODO: populate list with students that have started chats
+var students = {};
 
 class CounsellorsHome extends StatefulWidget {
   const CounsellorsHome({Key? key}) : super(key: key);
@@ -26,23 +16,53 @@ class CounsellorsHome extends StatefulWidget {
 }
 
 class _CounsellorsHomeState extends State<CounsellorsHome> {
+  late PusherClient pusher;
+  late Channel channel;
+  String userId = '0712345786'; // TODO: get this dynamically
+
+  void initState() {
+    super.initState();
+    pusher = PusherClient(
+      "66b80d0857f8dd93e43d", // app key
+      PusherOptions(
+          encrypted: false,
+          cluster: "ap2"
+      ),
+      enableLogging: true,
+    );
+    pusher.connect();
+
+    //subscribe to the channel
+    channel = pusher.subscribe("SPU-CHAT");
+
+    // listen to all messages coming to you; event name is your userId
+    channel.bind(userId, (msg) async {
+      // convert incoming messages to json format
+      var convert = await json.decode(msg!.data!);
+      print("The message is ${convert['message']}");
+
+      //add student to list if he/she has never started a chat before
+      var newStudent = students.putIfAbsent(convert['message']['sender_id'], () => convert['message']['sender_name']);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_title), backgroundColor: Colors.brown,),
-      body: counsellors.isNotEmpty
+      body: students.isNotEmpty
           ? ListView.builder(
-        itemCount: counsellors.length,
+        itemCount: students.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            leading: Image.asset('assets/images/Virtual_Mentorship_Icon.png'),
-            title: Text(counsellors[index]["name"]!),
+            leading: Image.asset('assets/images/Virtual_Mentorship_Icon.png'), //TODO: use a dynamic image
+            title: Text(students.values.elementAt(index)),
             subtitle: Text("Mental health and wellbeing"),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Chat(name: counsellors[index]["name"]!, phone: counsellors[index]["phone"]!)
+                    builder: (context) => Chat(name: students.values.elementAt(index), phone: students.keys.elementAt(index))
                 ),
               );
             },
